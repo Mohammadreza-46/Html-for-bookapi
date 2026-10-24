@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <main class="auth-page" id="auth-box">
+        <div class="auth-card">
+            <div class="brand brand-big">
+                <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"></path>
+                    <path d="M4 19V5"></path>
+                </svg>
+                <span>Book Shelf</span>
+            </div>
+            <p class="auth-sub">Your online bookshelf</p>
+            <input type="text" id="username" placeholder="username" autocomplete="username">
+            <input type="password" id="password" placeholder="password" autocomplete="new-password">
+            <button type="button" id="submit-btn">Sign Up</button>
+            <p class="switch-text">
+                <span id="switch-label">Do you have an account?</span>
+                <a href="#" id="switch-link">Click here</a>
+            </p>
+        </div>
+    </main>
+
+    <div class="app" id="dashboard-box" hidden>
+        <header class="topbar">
+            <div class="brand">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"></path>
+                    <path d="M4 19V5"></path>
+                </svg>
+                <span>Book Shelf</span>
+            </div>
+            <button type="button" id="logout-btn" class="logout-btn">Logout</button>
+        </header>
+
+        <nav class="side-nav">
+            <a href="#" class="nav-item" data-section="dashboard">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 11l9-8 9 8"></path>
+                    <path d="M5 10v10h5v-6h4v6h5V10"></path>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-section="books">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"></path>
+                    <path d="M4 19V5"></path>
+                </svg>
+                <span>Books</span>
+            </a>
+            <a href="#" class="nav-item nav-sub" data-section="mybooks">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 3h12v18l-6-4-6 4z"></path>
+                </svg>
+                <span>My Books</span>
+            </a>
+        </nav>
+
+        <main class="content">
+            <div class="panel" data-panel="dashboard" hidden>
+                <div class="panel-head">
+                    <h2>Dashboard</h2>
+                </div>
+                <p id="dashboard-message"></p>
+            </div>
+
+            <div class="panel" data-panel="books" hidden>
+                <div class="panel" id="books-list-view">
+                    <div class="panel-head">
+                        <h2 id="books-title">Books</h2>
+                        <div class="head-actions">
+                            <button type="button" id="clear-search-btn" class="secondary clear-btn" hidden>Clear
+                                search</button>
+                            <button type="button" id="search-btn" class="icon-btn" title="Search book"
+                                aria-label="Search book">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+                                    stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="7"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </button>
+                            <button type="button" id="add-btn" class="add-btn" title="Add book"
+                                aria-label="Add book">+</button>
+                        </div>
+                    </div>
+
+                    <div class="books-grid" id="books-grid"></div>
+
+                    <aside class="page-box" id="page-box">
+                        <span class="page-title">Page</span>
+                        <span class="page-number" id="page-number">1 / 1</span>
+                        <span class="page-total" id="books-info">0 books</span>
+                        <div class="page-buttons">
+                            <button type="button" id="prev-btn">Prev</button>
+                            <button type="button" id="next-btn">Next</button>
+                        </div>
+                    </aside>
+                </div>
+
+                <div class="panel" id="book-detail-view" hidden>
+                    <div class="detail-actions">
+                        <button type="button" id="back-btn" class="secondary back-btn">Back</button>
+                        <div class="detail-buttons">
+                            <button type="button" id="edit-btn" hidden>Edit</button>
+                            <button type="button" id="delete-btn" class="danger" hidden>Delete</button>
+                        </div>
+                    </div>
+
+                    <h2 id="detail-title"></h2>
+
+                    <div class="detail-description">
+                        <div class="detail-item"><span class="detail-label">ID</span><span id="detail-id"></span></div>
+                        <div class="detail-item"><span class="detail-label">Writer</span><span
+                                id="detail-writer"></span></div>
+                        <div class="detail-item"><span class="detail-label">Genre</span><span id="detail-genre"></span>
+                        </div>
+                        <div class="detail-item"><span class="detail-label">Published year</span><span
+                                id="detail-year"></span></div>
+                        <div class="detail-item"><span class="detail-label">Rating</span><span
+                                id="detail-rating"></span></div>
+                        <div class="detail-item"><span class="detail-label">Added by</span><span
+                                id="detail-added-by"></span></div>
+                        <div class="detail-item"><span class="detail-label">Created at</span><span
+                                id="detail-created"></span></div>
+                        <div class="detail-item"><span class="detail-label">Added at</span><span
+                                id="detail-added"></span></div>
+                    </div>
+
+                    <div class="detail-content" id="detail-content"></div>
+                </div>
+            </div>
+        </main>
+
+        <div class="modal" id="add-modal" hidden>
+            <form class="modal-card" id="add-form" novalidate>
+                <h3 id="form-title">Add book</h3>
+
+                <div class="form-grid">
+                    <div class="field full">
+                        <label for="add-name">Book name</label>
+                        <input type="text" id="add-name" placeholder="book name">
+                    </div>
+                    <div class="field">
+                        <label for="add-writer">Writer</label>
+                        <input type="text" id="add-writer" placeholder="writer">
+                    </div>
+                    <div class="field">
+                        <label for="add-genre">Genre</label>
+                        <input type="text" id="add-genre" placeholder="genre">
+                    </div>
+                    <div class="field">
+                        <label for="add-id">Book ID</label>
+                        <input type="number" id="add-id" placeholder="unique number" min="0" step="1">
+                    </div>
+                    <div class="field">
+                        <label for="add-year">Published year</label>
+                        <input type="number" id="add-year" placeholder="year" min="0" step="1">
+                    </div>
+                    <div class="field">
+                        <label for="add-rating">Rating (0-5)</label>
+                        <input type="number" id="add-rating" placeholder="0 to 5" min="0" max="5" step="1">
+                    </div>
+                    <div class="field">
+                        <label for="add-created">Created at</label>
+                        <input type="date" id="add-created">
+                    </div>
+                    <div class="field full">
+                        <label for="add-content">Book content</label>
+                        <textarea id="add-content" placeholder="write the book text here"></textarea>
+                    </div>
+                </div>
+
+                <p class="form-error" id="add-error"></p>
+
+                <div class="modal-actions">
+                    <button type="button" id="add-cancel" class="secondary">Cancel</button>
+                    <button type="submit" id="add-submit">Add book</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal" id="search-modal" hidden>
+            <div class="modal-card search-card">
+                <h3>Search book</h3>
+
+                <form class="search-form" id="search-form" novalidate>
+                    <div class="field">
+                        <label for="search-name">Book name</label>
+                        <input type="text" id="search-name" placeholder="book name">
+                    </div>
+                    <div class="field">
+                        <label for="search-writer">Writer</label>
+                        <input type="text" id="search-writer" placeholder="writer">
+                    </div>
+                    <div class="field">
+                        <label for="search-genre">Genre</label>
+                        <input type="text" id="search-genre" placeholder="genre">
+                    </div>
+
+                    <p class="form-error" id="search-error"></p>
+
+                    <div class="modal-actions">
+                        <button type="button" id="search-cancel" class="secondary">Cancel</button>
+                        <button type="submit" id="search-submit">Search</button>
+                    </div>
+                </form>
+
+                <hr class="divider">
+
+                <h4 class="sub-title">Search book with ID</h4>
+
+                <form class="id-form" id="id-form" novalidate>
+                    <div class="id-row">
+                        <input type="number" id="id-search-input" placeholder="book id" min="0" step="1">
+                        <button type="submit" id="id-search-submit">Find</button>
+                    </div>
+                    <p class="form-error" id="id-error"></p>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal" id="delete-modal" hidden>
+            <div class="modal-card confirm-card">
+                <h3>Delete book</h3>
+                <p class="confirm-text" id="delete-text"></p>
+                <p class="form-error" id="delete-error"></p>
+                <div class="modal-actions">
+                    <button type="button" id="delete-cancel" class="secondary">Cancel</button>
+                    <button type="button" id="delete-confirm" class="danger">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast" id="toast" hidden></div>
+    </div>
+</body>
+
+</html>
