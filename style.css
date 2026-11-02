@@ -171,14 +171,20 @@ button.danger:disabled:hover {
   z-index: 20;
 }
 
-.logout-btn {
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.top-btn {
   padding: 8px 18px;
   background: transparent;
   border: 1px solid rgba(232, 144, 63, 0.6);
   color: #f3d9bd;
 }
 
-.logout-btn:hover {
+.top-btn:hover {
   background: #e8903f;
   color: #1a1208;
 }
@@ -502,6 +508,10 @@ button.danger:disabled:hover {
   width: 420px;
 }
 
+.password-card {
+  width: 420px;
+}
+
 .confirm-text {
   margin: 0;
   font-size: 16px;
@@ -620,6 +630,15 @@ button.danger:disabled:hover {
 @media (max-width: 760px) {
   .topbar {
     padding: 0 14px;
+  }
+
+  .top-actions {
+    gap: 8px;
+  }
+
+  .top-btn {
+    padding: 8px 12px;
+    font-size: 13px;
   }
 
   .side-nav {

@@ -1,5 +1,7 @@
 const BASE_URL = "http://localhost:5000";
 const PER_PAGE = 12;
+const MIN_PASSWORD_LENGTH = 8;
+const MAX_PASSWORD_BYTES = 72;
 
 const urls = {
   signup: BASE_URL + "/signup",
@@ -89,6 +91,16 @@ const idForm = document.getElementById("id-form");
 const idSearchInput = document.getElementById("id-search-input");
 const idSearchSubmit = document.getElementById("id-search-submit");
 const idError = document.getElementById("id-error");
+
+const passwordBtn = document.getElementById("password-btn");
+const passwordModal = document.getElementById("password-modal");
+const passwordForm = document.getElementById("password-form");
+const oldPassword = document.getElementById("old-password");
+const newPassword = document.getElementById("new-password");
+const confirmPassword = document.getElementById("confirm-password");
+const passwordError = document.getElementById("password-error");
+const passwordCancel = document.getElementById("password-cancel");
+const passwordSubmit = document.getElementById("password-submit");
 
 const deleteModal = document.getElementById("delete-modal");
 const deleteText = document.getElementById("delete-text");
@@ -216,6 +228,7 @@ function showAuth() {
   addModal.hidden = true;
   deleteModal.hidden = true;
   searchModal.hidden = true;
+  passwordModal.hidden = true;
   dashboardBox.hidden = true;
   authBox.hidden = false;
 }
@@ -567,6 +580,91 @@ async function submitIdSearch(event) {
   }
 }
 
+function openPasswordModal() {
+  passwordForm.reset();
+  passwordError.textContent = "";
+  passwordModal.hidden = false;
+  oldPassword.focus();
+}
+
+function closePasswordModal() {
+  passwordModal.hidden = true;
+  passwordForm.reset();
+}
+
+async function submitPassword(event) {
+  event.preventDefault();
+
+  const oldValue = oldPassword.value;
+  const newValue = newPassword.value;
+  const confirmValue = confirmPassword.value;
+
+  if (!oldValue || !newValue || !confirmValue) {
+    passwordError.textContent = "Fill all fields";
+    return;
+  }
+
+  if (newValue.length < MIN_PASSWORD_LENGTH) {
+    passwordError.textContent =
+      "New password must be at least " + MIN_PASSWORD_LENGTH + " characters";
+    return;
+  }
+
+  if (new TextEncoder().encode(newValue).length > MAX_PASSWORD_BYTES) {
+    passwordError.textContent = "New password is too long (max " + MAX_PASSWORD_BYTES + " bytes)";
+    return;
+  }
+
+  if (newValue !== confirmValue) {
+    passwordError.textContent = "New passwords do not match";
+    return;
+  }
+
+  if (newValue === oldValue) {
+    passwordError.textContent = "New password must be different from the current one";
+    return;
+  }
+
+  passwordError.textContent = "";
+  passwordSubmit.disabled = true;
+
+  try {
+    const response = await authFetch(BASE_URL + "/change_password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        old_password: oldValue,
+        new_password: newValue
+      })
+    });
+
+    if (response.status === 401) {
+      clearTokens();
+      showAuth();
+      return;
+    }
+
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (error) {
+      data = {};
+    }
+
+    if (!response.ok) {
+      passwordError.textContent = data.message || "Server error: " + response.status;
+      return;
+    }
+
+    closePasswordModal();
+    showToast("Password changed");
+  } catch (error) {
+    passwordError.textContent = "Error changing the password";
+  } finally {
+    passwordSubmit.disabled = false;
+  }
+}
+
 function openDeleteModal() {
   if (!openedBook) {
     return;
@@ -882,6 +980,10 @@ searchForm.addEventListener("submit", submitSearch);
 idForm.addEventListener("submit", submitIdSearch);
 clearSearchBtn.addEventListener("click", exitSearch);
 
+passwordBtn.addEventListener("click", openPasswordModal);
+passwordCancel.addEventListener("click", closePasswordModal);
+passwordForm.addEventListener("submit", submitPassword);
+
 deleteBtn.addEventListener("click", openDeleteModal);
 deleteCancel.addEventListener("click", closeDeleteModal);
 deleteConfirm.addEventListener("click", deleteBook);
@@ -895,6 +997,12 @@ addModal.addEventListener("click", function (event) {
 searchModal.addEventListener("click", function (event) {
   if (event.target === searchModal) {
     closeSearchModal();
+  }
+});
+
+passwordModal.addEventListener("click", function (event) {
+  if (event.target === passwordModal) {
+    closePasswordModal();
   }
 });
 
@@ -915,6 +1023,10 @@ document.addEventListener("keydown", function (event) {
 
   if (!searchModal.hidden) {
     closeSearchModal();
+  }
+
+  if (!passwordModal.hidden) {
+    closePasswordModal();
   }
 
   if (!deleteModal.hidden) {

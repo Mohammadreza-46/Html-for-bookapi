@@ -41,7 +41,10 @@
                 </svg>
                 <span>Book Shelf</span>
             </div>
-            <button type="button" id="logout-btn" class="logout-btn">Logout</button>
+            <div class="top-actions">
+                <button type="button" id="password-btn" class="top-btn">Change password</button>
+                <button type="button" id="logout-btn" class="top-btn">Logout</button>
+            </div>
         </header>
 
         <nav class="side-nav">
@@ -231,6 +234,35 @@
                     <p class="form-error" id="id-error"></p>
                 </form>
             </div>
+        </div>
+
+        <div class="modal" id="password-modal" hidden>
+            <form class="modal-card password-card" id="password-form" novalidate>
+                <h3>Change password</h3>
+
+                <div class="field">
+                    <label for="old-password">Current password</label>
+                    <input type="password" id="old-password" placeholder="current password"
+                        autocomplete="current-password">
+                </div>
+                <div class="field">
+                    <label for="new-password">New password</label>
+                    <input type="password" id="new-password" placeholder="at least 8 characters"
+                        autocomplete="new-password">
+                </div>
+                <div class="field">
+                    <label for="confirm-password">Repeat new password</label>
+                    <input type="password" id="confirm-password" placeholder="repeat new password"
+                        autocomplete="new-password">
+                </div>
+
+                <p class="form-error" id="password-error"></p>
+
+                <div class="modal-actions">
+                    <button type="button" id="password-cancel" class="secondary">Cancel</button>
+                    <button type="submit" id="password-submit">Save password</button>
+                </div>
+            </form>
         </div>
 
         <div class="modal" id="delete-modal" hidden>
