@@ -904,7 +904,8 @@ function setMode(newMode) {
   }
 }
 
-async function submit() {
+async function submit(event) {
+  event.preventDefault();
   const username = usernameInput.value.trim();
   const password = passwordInput.value;
 
@@ -941,7 +942,8 @@ async function submit() {
   }
 }
 
-submitBtn.addEventListener("click", submit);
+const authForm = document.getElementById("auth-form");
+authForm.addEventListener("submit", submit);
 
 switchLink.addEventListener("click", function (event) {
   event.preventDefault();

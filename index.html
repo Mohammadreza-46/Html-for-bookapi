@@ -21,9 +21,13 @@
                 <span>Book Shelf</span>
             </div>
             <p class="auth-sub">Your online bookshelf</p>
-            <input type="text" id="username" placeholder="username" autocomplete="username">
-            <input type="password" id="password" placeholder="password" autocomplete="new-password">
-            <button type="button" id="submit-btn">Sign Up</button>
+
+            <form class="auth-form" id="auth-form" novalidate>
+                <input type="text" id="username" placeholder="username" autocomplete="username">
+                <input type="password" id="password" placeholder="password" autocomplete="new-password">
+                <button type="submit" id="submit-btn">Sign Up</button>
+            </form>
+
             <p class="switch-text">
                 <span id="switch-label">Do you have an account?</span>
                 <a href="#" id="switch-link">Click here</a>
