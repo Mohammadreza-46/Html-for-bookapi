@@ -184,6 +184,30 @@ async function authFetch(url, options = {}) {
   return response;
 }
 
+async function readJson(response) {
+  try {
+    return await response.json();
+  } catch (error) {
+    return {};
+  }
+}
+
+async function apiRequest(url, options = {}) {
+  const response = await authFetch(url, options);
+
+  if (response.status === 401) {
+    clearTokens();
+    showAuth();
+    return null;
+  }
+
+  return {
+    ok: response.ok,
+    status: response.status,
+    data: await readJson(response)
+  };
+}
+
 function showToast(text) {
   toast.textContent = text;
   toast.hidden = false;
@@ -323,33 +347,25 @@ async function loadBooks(page) {
   nextBtn.disabled = true;
 
   try {
-    const response = await authFetch(BASE_URL + endpoint + "?" + params.toString());
+    const result = await apiRequest(BASE_URL + endpoint + "?" + params.toString());
 
     if (myLoad !== loadId) {
       return null;
     }
 
-    if (response.status === 401) {
-      clearTokens();
-      showAuth();
+    if (result === null) {
       return null;
     }
 
-    if (!response.ok) {
-      showGridMessage("Server error: " + response.status);
+    if (!result.ok) {
+      showGridMessage("Server error: " + result.status);
       booksInfo.textContent = "";
       return null;
     }
 
-    const data = await response.json();
-
-    if (myLoad !== loadId) {
-      return null;
-    }
-
-    renderBooks(data.book);
-    updatePagination(data.pagination);
-    return data;
+    renderBooks(result.data.book);
+    updatePagination(result.data.pagination);
+    return result.data;
   } catch (error) {
     if (myLoad === loadId) {
       showGridMessage("Error loading books");
@@ -359,27 +375,12 @@ async function loadBooks(page) {
   }
 }
 
-async function fetchSearch(body) {
-  const response = await authFetch(BASE_URL + "/search", {
+function fetchSearch(body) {
+  return apiRequest(BASE_URL + "/search", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
-
-  if (response.status === 401) {
-    clearTokens();
-    showAuth();
-    return null;
-  }
-
-  let data = null;
-  try {
-    data = await response.json();
-  } catch (error) {
-    data = null;
-  }
-
-  return { ok: response.ok, status: response.status, data: data };
 }
 
 async function refreshSearch() {
@@ -450,21 +451,18 @@ function showBookDetail(book) {
 
 async function openBook(bookId) {
   try {
-    const response = await authFetch(BASE_URL + "/get_book/" + bookId);
+    const result = await apiRequest(BASE_URL + "/get_book/" + bookId);
 
-    if (response.status === 401) {
-      clearTokens();
-      showAuth();
+    if (result === null) {
       return;
     }
 
-    if (!response.ok) {
-      showToast("Could not load the book (" + response.status + ")");
+    if (!result.ok) {
+      showToast("Could not load the book (" + result.status + ")");
       return;
     }
 
-    const book = await response.json();
-    showBookDetail(book);
+    showBookDetail(result.data);
   } catch (error) {
     showToast("Could not connect to the server");
   }
@@ -517,8 +515,7 @@ async function submitSearch(event) {
     }
 
     if (!result.ok || !Array.isArray(result.data)) {
-      searchError.textContent =
-        (result.data && result.data.message) || "Server error: " + result.status;
+      searchError.textContent = result.data.message || "Server error: " + result.status;
       return;
     }
 
@@ -553,28 +550,19 @@ async function submitIdSearch(event) {
   idSearchSubmit.disabled = true;
 
   try {
-    const response = await authFetch(BASE_URL + "/get_book/" + bookId);
+    const result = await apiRequest(BASE_URL + "/get_book/" + bookId);
 
-    if (response.status === 401) {
-      clearTokens();
-      showAuth();
+    if (result === null) {
       return;
     }
 
-    let data = null;
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = null;
-    }
-
-    if (!response.ok) {
-      idError.textContent = (data && data.message) || "Server error: " + response.status;
+    if (!result.ok) {
+      idError.textContent = result.data.message || "Server error: " + result.status;
       return;
     }
 
     closeSearchModal();
-    showBookDetail(data);
+    showBookDetail(result.data);
   } catch (error) {
     idError.textContent = "Error searching the book";
   } finally {
@@ -631,7 +619,7 @@ async function submitPassword(event) {
   passwordSubmit.disabled = true;
 
   try {
-    const response = await authFetch(BASE_URL + "/change_password", {
+    const result = await apiRequest(BASE_URL + "/change_password", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -640,21 +628,12 @@ async function submitPassword(event) {
       })
     });
 
-    if (response.status === 401) {
-      clearTokens();
-      showAuth();
+    if (result === null) {
       return;
     }
 
-    let data = {};
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = {};
-    }
-
-    if (!response.ok) {
-      passwordError.textContent = data.message || "Server error: " + response.status;
+    if (!result.ok) {
+      passwordError.textContent = result.data.message || "Server error: " + result.status;
       return;
     }
 
@@ -692,25 +671,16 @@ async function deleteBook() {
   deleteConfirm.disabled = true;
 
   try {
-    const response = await authFetch(BASE_URL + "/delete_book/" + openedBook.book_id, {
+    const result = await apiRequest(BASE_URL + "/delete_book/" + openedBook.book_id, {
       method: "DELETE"
     });
 
-    if (response.status === 401) {
-      clearTokens();
-      showAuth();
+    if (result === null) {
       return;
     }
 
-    let data = {};
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = {};
-    }
-
-    if (!response.ok) {
-      deleteError.textContent = data.message || "Server error: " + response.status;
+    if (!result.ok) {
+      deleteError.textContent = result.data.message || "Server error: " + result.status;
       return;
     }
 
@@ -721,9 +691,9 @@ async function deleteBook() {
     if (searchActive) {
       await refreshSearch();
     } else {
-      const result = await loadBooks(currentPage);
-      if (result && result.book.length === 0 && currentPage > 1) {
-        await loadBooks(Math.max(result.pagination.total_pages, 1));
+      const data = await loadBooks(currentPage);
+      if (data && data.book.length === 0 && currentPage > 1) {
+        await loadBooks(Math.max(data.pagination.total_pages, 1));
       }
     }
   } catch (error) {
@@ -836,7 +806,7 @@ async function submitBook(event) {
     : BASE_URL + "/add_book";
 
   try {
-    const response = await authFetch(url, {
+    const result = await apiRequest(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -851,21 +821,12 @@ async function submitBook(event) {
       })
     });
 
-    if (response.status === 401) {
-      clearTokens();
-      showAuth();
+    if (result === null) {
       return;
     }
 
-    let data = {};
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = {};
-    }
-
-    if (!response.ok) {
-      addError.textContent = data.message || "Server error: " + response.status;
+    if (!result.ok) {
+      addError.textContent = result.data.message || "Server error: " + result.status;
       return;
     }
 
@@ -928,12 +889,7 @@ async function submit(event) {
       body: JSON.stringify({ username, password })
     });
 
-    let data = {};
-    try {
-      data = await response.json();
-    } catch (error) {
-      data = {};
-    }
+    const data = await readJson(response);
 
     if (!response.ok) {
       authError.textContent = data.message || "Server error: " + response.status;
