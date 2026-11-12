@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
     <link rel="stylesheet" href="style.css">
+    <script src="config.js" defer></script>
     <script src="script.js" defer></script>
 </head>
 
@@ -84,6 +85,31 @@
                     <h2>Dashboard</h2>
                 </div>
                 <p id="dashboard-message"></p>
+
+                <div class="stats-grid" id="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">Username</span>
+                        <span class="stat-value" id="stat-username">-</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">My books</span>
+                        <span class="stat-value" id="stat-my-books">-</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Average rating</span>
+                        <span class="stat-value" id="stat-rating">-</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">My genres</span>
+                        <span class="stat-value" id="stat-genres">-</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">All books</span>
+                        <span class="stat-value" id="stat-all-books">-</span>
+                    </div>
+                </div>
+
+                <p class="form-error" id="stats-error"></p>
             </div>
 
             <div class="panel" data-panel="books" hidden>

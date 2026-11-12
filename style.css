@@ -292,6 +292,36 @@ button.danger:disabled:hover {
   white-space: pre-line;
 }
 
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 14px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #fff4e6, #ffe0bd);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #a65a1c;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #1f2937;
+  overflow-wrap: anywhere;
+}
+
 .add-btn {
   width: 46px;
   height: 46px;

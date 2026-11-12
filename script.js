@@ -1,5 +1,3 @@
-const BASE_URL = "http://localhost:5000";
-const PER_PAGE = 12;
 const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_BYTES = 72;
 
@@ -30,6 +28,13 @@ const dashboardMessage = document.getElementById("dashboard-message");
 const logoutBtn = document.getElementById("logout-btn");
 const navItems = document.querySelectorAll(".nav-item");
 const panels = document.querySelectorAll("[data-panel]");
+
+const statUsername = document.getElementById("stat-username");
+const statMyBooks = document.getElementById("stat-my-books");
+const statRating = document.getElementById("stat-rating");
+const statGenres = document.getElementById("stat-genres");
+const statAllBooks = document.getElementById("stat-all-books");
+const statsError = document.getElementById("stats-error");
 
 const authForm = document.getElementById("auth-form");
 const authError = document.getElementById("auth-error");
@@ -120,6 +125,7 @@ let totalPages = 0;
 let toastTimer = null;
 let openedBook = null;
 let loadId = 0;
+let dashboardLoadId = 0;
 let searchActive = false;
 let lastSearchBody = null;
 
@@ -229,6 +235,64 @@ function setSearchUI(active, count) {
   }
 }
 
+function statText(value) {
+  return value === undefined || value === null || value === "" ? "-" : String(value);
+}
+
+async function loadDashboard() {
+  const myLoad = ++dashboardLoadId;
+
+  statsError.textContent = "";
+  [statUsername, statMyBooks, statRating, statGenres, statAllBooks].forEach(function (element) {
+    element.textContent = "-";
+  });
+
+  try {
+    const results = await Promise.all([
+      apiRequest(BASE_URL + "/me"),
+      apiRequest(BASE_URL + "/stats"),
+      apiRequest(BASE_URL + "/get_all_book?page=1&per_page=1")
+    ]);
+
+    if (myLoad !== dashboardLoadId) {
+      return;
+    }
+
+    if (results.some(function (result) { return result === null; })) {
+      return;
+    }
+
+    const me = results[0];
+    const stats = results[1];
+    const allBooks = results[2];
+
+    if (me.ok) {
+      statUsername.textContent = statText(me.data.username || getUsernameFromToken());
+    }
+
+    if (stats.ok) {
+      statMyBooks.textContent = statText(stats.data.total_books);
+      statRating.textContent =
+        stats.data.average_rating === null || stats.data.average_rating === undefined
+          ? "-"
+          : stats.data.average_rating + " / 5";
+      statGenres.textContent = statText(stats.data.distinct_genres);
+    }
+
+    if (allBooks.ok && allBooks.data.pagination) {
+      statAllBooks.textContent = statText(allBooks.data.pagination.total);
+    }
+
+    if (!me.ok || !stats.ok || !allBooks.ok) {
+      statsError.textContent = "Could not load some statistics";
+    }
+  } catch (error) {
+    if (myLoad === dashboardLoadId) {
+      statsError.textContent = "Could not connect to the server";
+    }
+  }
+}
+
 function showSection(name) {
   currentSection = name;
 
@@ -247,6 +311,10 @@ function showSection(name) {
     currentPage = 1;
     showBooksList();
     loadBooks(1);
+  }
+
+  if (name === "dashboard") {
+    loadDashboard();
   }
 }
 
