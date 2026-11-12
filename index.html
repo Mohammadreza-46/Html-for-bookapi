@@ -25,6 +25,7 @@
             <form class="auth-form" id="auth-form" novalidate>
                 <input type="text" id="username" placeholder="username" autocomplete="username">
                 <input type="password" id="password" placeholder="password" autocomplete="new-password">
+                <p class="form-error" id="auth-error" role="alert"></p>
                 <button type="submit" id="submit-btn">Sign Up</button>
             </form>
 
@@ -280,9 +281,9 @@
                 </div>
             </div>
         </div>
-
-        <div class="toast" id="toast" hidden></div>
     </div>
+
+    <div class="toast" id="toast" hidden></div>
 </body>
 
 </html>

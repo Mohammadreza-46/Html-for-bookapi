@@ -31,6 +31,8 @@ const logoutBtn = document.getElementById("logout-btn");
 const navItems = document.querySelectorAll(".nav-item");
 const panels = document.querySelectorAll("[data-panel]");
 
+const authForm = document.getElementById("auth-form");
+const authError = document.getElementById("auth-error");
 const usernameInput = document.getElementById("username");
 const passwordInput = document.getElementById("password");
 const submitBtn = document.getElementById("submit-btn");
@@ -457,14 +459,14 @@ async function openBook(bookId) {
     }
 
     if (!response.ok) {
-      alert("Could not load the book (" + response.status + ")");
+      showToast("Could not load the book (" + response.status + ")");
       return;
     }
 
     const book = await response.json();
     showBookDetail(book);
   } catch (error) {
-    alert("Error");
+    showToast("Could not connect to the server");
   }
 }
 
@@ -890,6 +892,7 @@ async function submitBook(event) {
 
 function setMode(newMode) {
   mode = newMode;
+  authError.textContent = "";
 
   if (mode === "signup") {
     document.title = "Sign Up";
@@ -906,13 +909,17 @@ function setMode(newMode) {
 
 async function submit(event) {
   event.preventDefault();
+  authError.textContent = "";
+
   const username = usernameInput.value.trim();
   const password = passwordInput.value;
 
   if (!username || !password) {
-    alert("Fill both fields");
+    authError.textContent = "Fill both fields";
     return;
   }
+
+  submitBtn.disabled = true;
 
   try {
     const response = await fetch(urls[mode], {
@@ -921,10 +928,15 @@ async function submit(event) {
       body: JSON.stringify({ username, password })
     });
 
-    const data = await response.json();
+    let data = {};
+    try {
+      data = await response.json();
+    } catch (error) {
+      data = {};
+    }
 
     if (!response.ok) {
-      alert(data.message || "Server error: " + response.status);
+      authError.textContent = data.message || "Server error: " + response.status;
       return;
     }
 
@@ -934,15 +946,16 @@ async function submit(event) {
       currentPage = 1;
       await showDashboard();
     } else {
-      alert("Account created");
       setMode("login");
+      showToast("Account created, you can log in now");
     }
   } catch (error) {
-    alert("Error");
+    authError.textContent = "Could not connect to the server";
+  } finally {
+    submitBtn.disabled = false;
   }
 }
 
-const authForm = document.getElementById("auth-form");
 authForm.addEventListener("submit", submit);
 
 switchLink.addEventListener("click", function (event) {

@@ -131,10 +131,19 @@ button.danger:disabled:hover {
   border-radius: 20px;
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
 }
+
 .auth-form {
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.auth-form .form-error {
+  text-align: center;
+}
+
+.auth-form .form-error:empty {
+  display: none;
 }
 
 .auth-sub {
