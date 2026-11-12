@@ -132,6 +132,38 @@
                         </div>
                     </div>
 
+                    <div class="filters" id="filters-bar">
+                        <div class="filter-field">
+                            <label for="genre-filter">Genre</label>
+                            <select id="genre-filter">
+                                <option value="">All</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="rating-filter">Min rating</label>
+                            <select id="rating-filter">
+                                <option value="">Any</option>
+                                <option value="1">1 and up</option>
+                                <option value="2">2 and up</option>
+                                <option value="3">3 and up</option>
+                                <option value="4">4 and up</option>
+                                <option value="5">5 only</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label for="sort-filter">Sort by</label>
+                            <select id="sort-filter">
+                                <option value="">Default (ID)</option>
+                                <option value="rating:desc">Rating (high to low)</option>
+                                <option value="rating:asc">Rating (low to high)</option>
+                                <option value="published_year:desc">Year (newest first)</option>
+                                <option value="published_year:asc">Year (oldest first)</option>
+                                <option value="book_name:asc">Name (A to Z)</option>
+                                <option value="book_name:desc">Name (Z to A)</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="books-grid" id="books-grid"></div>
 
                     <aside class="page-box" id="page-box">

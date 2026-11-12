@@ -46,6 +46,10 @@ const switchLink = document.getElementById("switch-link");
 
 const booksTitle = document.getElementById("books-title");
 const booksGrid = document.getElementById("books-grid");
+const filtersBar = document.getElementById("filters-bar");
+const genreFilter = document.getElementById("genre-filter");
+const ratingFilter = document.getElementById("rating-filter");
+const sortFilter = document.getElementById("sort-filter");
 const pageBox = document.getElementById("page-box");
 const pageNumber = document.getElementById("page-number");
 const booksInfo = document.getElementById("books-info");
@@ -223,10 +227,75 @@ function showToast(text) {
   }, 2500);
 }
 
+function resetFilters() {
+  genreFilter.value = "";
+  ratingFilter.value = "";
+  sortFilter.value = "";
+}
+
+function hasFilters() {
+  return currentSection === "books" && (genreFilter.value !== "" || ratingFilter.value !== "");
+}
+
+function addFilterParams(params) {
+  if (currentSection !== "books") {
+    return;
+  }
+
+  if (genreFilter.value) {
+    params.set("genre", genreFilter.value);
+  }
+
+  if (ratingFilter.value) {
+    params.set("min_rating", ratingFilter.value);
+  }
+
+  if (sortFilter.value) {
+    const parts = sortFilter.value.split(":");
+    params.set("sort", parts[0]);
+    params.set("order", parts[1]);
+  }
+}
+
+async function loadGenres() {
+  try {
+    const result = await apiRequest(BASE_URL + "/genres");
+
+    if (result === null || !result.ok || !Array.isArray(result.data.genres)) {
+      return;
+    }
+
+    const selected = genreFilter.value;
+
+    while (genreFilter.options.length > 1) {
+      genreFilter.remove(1);
+    }
+
+    result.data.genres.forEach(function (genre) {
+      if (!genre) {
+        return;
+      }
+
+      const option = document.createElement("option");
+      option.value = genre;
+      option.textContent = genre;
+      genreFilter.appendChild(option);
+    });
+
+    genreFilter.value = selected;
+    if (genreFilter.selectedIndex === -1) {
+      genreFilter.value = "";
+    }
+  } catch (error) {
+    return;
+  }
+}
+
 function setSearchUI(active, count) {
   searchActive = active;
   clearSearchBtn.hidden = !active;
   pageBox.hidden = active;
+  filtersBar.hidden = active || currentSection !== "books";
 
   if (active) {
     booksTitle.textContent = "Search results (" + count + ")";
@@ -307,9 +376,15 @@ function showSection(name) {
   if (BOOK_ENDPOINTS[name]) {
     lastSearchBody = null;
     searchBtn.hidden = name !== "books";
+    resetFilters();
     setSearchUI(false);
     currentPage = 1;
     showBooksList();
+
+    if (name === "books") {
+      loadGenres();
+    }
+
     loadBooks(1);
   }
 
@@ -325,6 +400,7 @@ function showAuth() {
   passwordModal.hidden = true;
   dashboardBox.hidden = true;
   authBox.hidden = false;
+  resetFilters();
 }
 
 async function showDashboard() {
@@ -364,6 +440,8 @@ function renderBooks(books) {
       showGridMessage("No books match your search");
     } else if (currentSection === "mybooks") {
       showGridMessage("You have not added any books yet");
+    } else if (hasFilters()) {
+      showGridMessage("No books match these filters");
     } else {
       showGridMessage("No books found");
     }
@@ -409,6 +487,8 @@ async function loadBooks(page) {
     page: page,
     per_page: PER_PAGE
   });
+
+  addFilterParams(params);
 
   booksInfo.textContent = "Loading...";
   prevBtn.disabled = true;
@@ -755,6 +835,7 @@ async function deleteBook() {
     closeDeleteModal();
     showBooksList();
     showToast("Book deleted");
+    await loadGenres();
 
     if (searchActive) {
       await refreshSearch();
@@ -899,6 +980,7 @@ async function submitBook(event) {
     }
 
     closeAddModal();
+    await loadGenres();
 
     if (isEdit) {
       showToast("Book updated");
@@ -991,6 +1073,12 @@ navItems.forEach(function (item) {
   item.addEventListener("click", function (event) {
     event.preventDefault();
     showSection(item.dataset.section);
+  });
+});
+
+[genreFilter, ratingFilter, sortFilter].forEach(function (select) {
+  select.addEventListener("change", function () {
+    loadBooks(1);
   });
 });
 

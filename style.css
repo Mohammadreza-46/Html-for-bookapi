@@ -18,7 +18,8 @@ body {
 }
 
 input,
-textarea {
+textarea,
+select {
   padding: 10px 12px;
   border: 1px solid #c8ccd4;
   border-radius: 8px;
@@ -29,7 +30,8 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   outline: none;
   border-color: #e8903f;
   box-shadow: 0 0 0 3px rgba(232, 144, 63, 0.2);
@@ -39,6 +41,10 @@ input:disabled {
   background: #f1f2f5;
   color: #6b7280;
   cursor: not-allowed;
+}
+
+select {
+  cursor: pointer;
 }
 
 textarea {
@@ -280,6 +286,29 @@ button.danger:disabled:hover {
 
 .clear-btn {
   padding: 10px 16px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #fdeedd;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1 1 170px;
+}
+
+.filter-field label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #a65a1c;
+  text-transform: uppercase;
 }
 
 #dashboard-message {
