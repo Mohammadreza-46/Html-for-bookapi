@@ -79,7 +79,6 @@ const formTitle = document.getElementById("form-title");
 const addName = document.getElementById("add-name");
 const addWriter = document.getElementById("add-writer");
 const addGenre = document.getElementById("add-genre");
-const addId = document.getElementById("add-id");
 const addYear = document.getElementById("add-year");
 const addRating = document.getElementById("add-rating");
 const addCreated = document.getElementById("add-created");
@@ -869,7 +868,6 @@ function openAddModal() {
   addForm.reset();
   formTitle.textContent = "Add book";
   addSubmit.textContent = "Add book";
-  addId.disabled = false;
   addCreated.value = todayString();
   addError.textContent = "";
   addModal.hidden = false;
@@ -889,8 +887,6 @@ function openEditModal() {
   addName.value = openedBook.book_name || "";
   addWriter.value = openedBook.writer || "";
   addGenre.value = openedBook.genre || "";
-  addId.value = openedBook.book_id;
-  addId.disabled = true;
   addYear.value = openedBook.published_year;
   addRating.value = openedBook.rating;
   addCreated.value = dateForInput(openedBook.created_at);
@@ -914,26 +910,21 @@ async function submitBook(event) {
     return;
   }
 
+  const editId = isEdit ? openedBook.book_id : null;
   const name = addName.value.trim();
   const writer = addWriter.value.trim();
   const genre = addGenre.value.trim();
   const content = addContent.value.trim();
   const created = addCreated.value;
-  const bookId = isEdit ? openedBook.book_id : Number(addId.value);
   const year = Number(addYear.value);
   const rating = Number(addRating.value);
   const currentYear = new Date().getFullYear();
 
   if (
     !name || !writer || !genre || !content || !created ||
-    (!isEdit && addId.value === "") || addYear.value === "" || addRating.value === ""
+    addYear.value === "" || addRating.value === ""
   ) {
     addError.textContent = "Fill all fields";
-    return;
-  }
-
-  if (!Number.isInteger(bookId) || bookId < 0) {
-    addError.textContent = "Book ID must be a whole number";
     return;
   }
 
@@ -950,24 +941,29 @@ async function submitBook(event) {
   addError.textContent = "";
   addSubmit.disabled = true;
 
+  const payload = {
+    book_name: name,
+    book_content: content,
+    writer: writer,
+    published_year: year,
+    rating: rating,
+    genre: genre,
+    created_at: created
+  };
+
+  if (isEdit) {
+    payload.book_id = editId;
+  }
+
   const url = isEdit
-    ? BASE_URL + "/update_book/" + bookId
+    ? BASE_URL + "/update_book/" + editId
     : BASE_URL + "/add_book";
 
   try {
     const result = await apiRequest(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        book_name: name,
-        book_content: content,
-        book_id: bookId,
-        writer: writer,
-        published_year: year,
-        rating: rating,
-        genre: genre,
-        created_at: created
-      })
+      body: JSON.stringify(payload)
     });
 
     if (result === null) {
@@ -984,7 +980,7 @@ async function submitBook(event) {
 
     if (isEdit) {
       showToast("Book updated");
-      await openBook(bookId);
+      await openBook(editId);
       refreshList();
     } else {
       showToast("Book added");
