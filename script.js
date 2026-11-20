@@ -576,7 +576,7 @@ function fillDetail(book) {
   detailWriter.textContent = text(book.writer);
   detailGenre.textContent = text(book.genre);
   detailYear.textContent = text(book.published_year);
-  detailRating.textContent = book.rating === undefined ? "-" : book.rating + "/5";
+  detailRating.textContent = book.rating == null ? "-" : book.rating + "/5";
   detailAddedBy.textContent = text(book.added_by);
   detailCreated.textContent = text(book.created_at);
   detailAdded.textContent = text(book.added_at);
