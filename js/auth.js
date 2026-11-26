@@ -1,14 +1,14 @@
-import { BASE_URL } from "./config.js";
-import { state } from "./state.js";
-import { authFetch, readJson, saveTokens, clearTokens } from "./api.js";
-import { showToast } from "./ui.js";
-import { resetFilters } from "./filters.js";
-import { closeAllModals } from "./modals.js";
-import { showSection, setWelcomeMessage } from "./dashboard.js";
+import { BASE_URL } from "../config.js";
+import { state } from "../state.js";
+import { authFetch, readJson, saveTokens, clearTokens } from "../api.js";
+import { showToast } from "../ui.js";
+import { resetFilters } from "../filters.js";
+import { closeAllModals } from "../modals.js";
+import { showSection, setWelcomeMessage } from "../dashboard.js";
 import {
   authBox, dashboardBox, authError, usernameInput, passwordInput,
   submitBtn, switchLabel
-} from "./dom.js";
+} from "../dom.js";
 
 const urls = {
   signup: BASE_URL + "/signup",

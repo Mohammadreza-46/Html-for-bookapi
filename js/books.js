@@ -2,7 +2,7 @@ import { BASE_URL, PER_PAGE } from "./config.js";
 import { state } from "./state.js";
 import { apiRequest } from "./api.js";
 import { resetFilters, hasFilters, addFilterParams, loadGenres } from "./filters.js";
-import { showBooksList, openBook } from "./book-detail.js";
+import { showBooksList, openBook } from "./js/book-detail.js";
 import {
   booksTitle, booksGrid, filtersBar, pageBox, pageNumber, booksInfo,
   prevBtn, nextBtn, searchBtn, clearSearchBtn
