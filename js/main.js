@@ -1,8 +1,8 @@
 import { setUnauthorizedHandler } from "./api.js";
-import { showAuth, showDashboard, toggleMode, submitAuth, logout } from "./js/auth.js";
+import { showAuth, showDashboard, toggleMode, submitAuth, logout } from "./auth.js";
 import { showSection } from "./dashboard.js";
 import { loadBooks, exitSearch, prevPage, nextPage } from "./books.js";
-import { showBooksList } from "./js/book-detail.js";
+import { showBooksList } from "./book-detail.js";
 import {
   openSearchModal, closeSearchModal, submitSearch, submitIdSearch,
   openPasswordModal, closePasswordModal, submitPassword
@@ -10,7 +10,7 @@ import {
 import {
   openAddModal, openEditModal, closeAddModal, submitBook,
   openDeleteModal, closeDeleteModal, deleteBook
-} from "./js/book-actions.js";
+} from "./book-actions.js";
 import {
   authForm, switchLink, logoutBtn, navItems,
   genreFilter, ratingFilter, sortFilter, prevBtn, nextBtn, backBtn,

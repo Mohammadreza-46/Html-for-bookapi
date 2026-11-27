@@ -3,7 +3,7 @@ import { state } from "./state.js";
 import { apiRequest } from "./api.js";
 import { showToast } from "./ui.js";
 import { fetchSearch, renderBooks, setSearchUI } from "./books.js";
-import { showBookDetail } from "./js/book-detail.js";
+import { showBookDetail } from "./book-detail.js";
 import {
   addModal, deleteModal, searchModal, passwordModal,
   searchForm, searchName, searchWriter, searchGenre, searchError, searchSubmit,

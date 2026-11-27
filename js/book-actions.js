@@ -1,15 +1,15 @@
-import { BASE_URL } from "../config.js";
-import { state } from "../state.js";
-import { apiRequest } from "../api.js";
-import { showToast } from "../ui.js";
-import { loadGenres } from "../filters.js";
+import { BASE_URL } from "./config.js";
+import { state } from "./state.js";
+import { apiRequest } from "./api.js";
+import { showToast } from "./ui.js";
+import { loadGenres } from "./filters.js";
 import { showBooksList, openBook } from "./book-detail.js";
-import { loadBooks, refreshList, refreshSearch, exitSearch } from "../books.js";
+import { loadBooks, refreshList, refreshSearch, exitSearch } from "./books.js";
 import {
   addModal, addForm, formTitle, addName, addWriter, addGenre, addYear,
   addRating, addCreated, addContent, addError, addSubmit,
   deleteModal, deleteText, deleteError, deleteCancel, deleteConfirm
-} from "../dom.js";
+} from "./dom.js";
 
 function todayString() {
   const now = new Date();

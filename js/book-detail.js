@@ -1,12 +1,12 @@
-import { BASE_URL } from "../config.js";
-import { state } from "../state.js";
-import { apiRequest, getUsernameFromToken } from "../api.js";
-import { showToast } from "../ui.js";
+import { BASE_URL } from "./config.js";
+import { state } from "./state.js";
+import { apiRequest, getUsernameFromToken } from "./api.js";
+import { showToast } from "./ui.js";
 import {
   booksListView, bookDetailView, editBtn, deleteBtn,
   detailTitle, detailId, detailWriter, detailGenre, detailYear, detailRating,
   detailAddedBy, detailCreated, detailAdded, detailContent
-} from "../dom.js";
+} from "./dom.js";
 
 export function showBooksList() {
   bookDetailView.hidden = true;
